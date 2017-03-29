@@ -1,3 +1,24 @@
 Near Zero Downtime Migration to DynamoDB from MySQL on IDC with Different KeyStructure using Kinesis and EMR
 
- <  In Progress > 
+Many companies consider a migration from RDBMS(MySQL) to AWS DynamoDB because of many advantages that DynamoDB has such as schema-less data model, low latency, high performance and good scalability. However, I sometimes see some migration plans tackled by below two issue, especially when customer’s service must be seamlessly available for 24-7-365 and does not allow down-time for data migration.
+•	Service outage due to down-time required by data migration
+•	Different key design between RDBMS and DynamoDB.
+Aamzon EMR  is a managed Hadoop framework that help you process vast amount of data in a easy and fast way. You can build EMR with your adequate software stacks based on your business purpose by simply clicking some pre-configured framework.  Hive is one of EMR application, open-source , data warehouse optimized for batch-oriented data processing and analytic package that runs SQL-like language on top of a Hadoop cluster.  Amazon Kinesis Stream  can continuously capture and retain a vast amount of data such as transaction, IT logs or clickstream inside the stream up to 7 days so far.  Lambda helps you run your code without provisioning or managing servers and your code can be automatically triggered by other AWS services such AWS Kinesis Stream. 
+This blog post shows how to seamlessly migrate data to DynamoDB from MySQL on IDC, minimizing down time and converting MySQL key design into different one that is more suitable for NoSQL, by utilizing Amazon EMR(Hive/MapReduce), Kinesis Stream and Lambda function with some sample codes. 
+
+Summary of the solution
+•	Dump all existing data to S3 and bulk-insert into DynamoDB on EMR : Export all  data of MySQL database/tables into local disk and upload them to S3.  Create EMR cluster, read the data on S3 using EMR(Hive or MapReduce) and batch-puts into DynamoDB in parallel.
+•	Capture changed data on MySQL and send them to Kinesis stream to DynamoDB through Lambda funcation : Python  package ( “BinLogStreamReader”)  supports CDC(Change Data Capture).  Capture Insert/Update/Delete transaction from MySQL and put them into Kinesis Stream.  AWS Lambda function is invoked by new records in Kinesis Stream and update them into DynamoDB.
+•	Switch end point of application to DynamoDB : Once bulk-puts has been finished and most recent data are caught up by real-time migration process, you can change the application end point to DynamoDB. 
+The method of capturing changed data from MySQL is referred from another AWS blog, Streaming Changes in a Database with Amazon Kinesis.  I believe this migration method can be applied to other types of RDBMS if they have any manners of making it possible to feed changed data into Kinesis stream. 
+
+
+Detailed Steps
+To keep the data consistency and integrity, capturing and feeding data to Kinesis stream should be started before batch-puts process. And Lambda function should stand by and Kinesis stream should retain the captured data within the stream until batch-puts process on EMR finishes 
+Step 1. Strat CDC on MySQL  database and send captured data to Kinesis stream. 
+Step 2. As soon as Step1 commences, start to dump data from RDMBS to local disk to S3. Once all data are uploaded to S3, EMR reads data from S3 and batch-puts into DynamoDB. Hive or Mapreduce program can be used in this stage.  If you decide to use Hive, you need to create external table against data on S3 and against DynamoDB as well.  MapReduce job  should be considered in case that key conversion logic is complex and key values of attributes are dynamic and not fixed.  
+Step 3. After Step2 finishes, get lambda function started to “put_item” into DynamoDB.  Lambda function will read data from Kinesis Stream that has been captured data from the beginning of Step1.  Changing key design should be done within the Lambda function while it puts items into DynamoDB. 
+Step 4. Change application’s endpoint to DynamoDB from MySQL
+
+
+Linkn to Blog : XXXXXXXXXXX
