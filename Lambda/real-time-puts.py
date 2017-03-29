@@ -13,10 +13,9 @@ def lambda_handler(event, context):
         # Kinesis data is base64 encoded so decode here
         payload = base64.b64decode(record['kinesis']['data'])
         print("Decoded payload: " + payload)
-        
-########### user logic start  ##################
         data = json.loads(payload)
-
+        
+        # user logic for data triggered by WriteRowsEvent
         if data["type"] == "WriteRowsEvent":
             my_table = data["table"]
             my_hashkey = data["row"]["values"]["customerid"]
@@ -38,12 +37,13 @@ def lambda_handler(event, context):
             except Exception, e:
                 print( 'WriteRowsEvent Exception ! :', e.message  , '==> Data:' ,data["row"]["values"]["customerid"]  , data["row"]["values"]["orderid"] )
         
+        # user logic for data triggered by UpdateRowsEvent
         if data["type"] == "UpdateRowsEvent":
-            # user logic for data triggered by UpdateRowsEvent
+            my_table = data["table"]
             
+        # user logic for data triggered by DeleteRowsEvent    
         if data["type"] == "DeleteRowsEvent":
-            # user logic for data triggered by DeleteRowsEvent
+            my_table = data["table"]
             
             
-########### user logic end ##################
     return 'Successfully processed {} records.'.format(len(event['Records']))
