@@ -16,7 +16,7 @@ product1  bigint, product2  bigint, product3  bigint, product4  bigint,
 product5  bigint, product6  bigint, product7  bigint, product8  bigint, 
 product9  bigint, product10 bigint  )
 STORED BY 'org.apache.hadoop.hive.dynamodb.DynamoDBStorageHandler' 
-TBLPROPERTIES ("dynamodb.table.name" = "purchase_temp", 
+TBLPROPERTIES ("dynamodb.table.name" = "purchase", 
 "dynamodb.column.mapping" = "customerid:customerid,orderid:orderid,product1:product1,product2:product2,product3:product3,product4:product4,product5:product5,product6:product6,product7:product7,product8:product8,product9:product9,product10:product10");
 
 INSERT INTO purchase_ext_dynamodb
