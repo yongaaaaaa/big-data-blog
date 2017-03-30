@@ -1,0 +1,31 @@
+--- Create seed table ---
+$ for i in {1..1000000}; do  echo customerid$i; done > /data/import/customerid.txt
+$ for i in {1..100}; do  echo orderid$i; done > /data/import/orderid.txt
+$ for i in {1..10}; do  echo productid$i; done > /data/import/productid.txt
+
+
+---- Load seed data into MysQL and multiply them
+SQL> LOAD DATA INFILE "/data/import/customerid.txt" INTO TABLE customer COLUMNS TERMINATED BY ',' LINES TERMINATED BY '\n' ;
+SQL> LOAD DATA INFILE "/data/import/orderid.txt" INTO TABLE myorder COLUMNS TERMINATED BY ',' LINES TERMINATED BY '\n' ;
+SQL> LOAD DATA INFILE "/data/import/productid.txt" INTO TABLE product COLUMNS TERMINATED BY ',' LINES TERMINATED BY '\n' ;
+
+SQL> create table purchase 
+     ( customerid varchar(100) ,
+       orderid    varchar(100) ,
+       productid    varchar(100) ,
+       quantity     smallint,
+       PRIMARY KEY (customerid ,orderid, productid  )
+    )
+
+SQL> insert into purchase  select a.customerid  as customerid , b.orderid as orderid , c.productid as productid,   round( rand()*10)   as quantity
+from customer a  , myorder b , product c 
+where  c.productid = 'productid1'
+SQL> insert into purchase  select a.customerid  as customerid , b.orderid as orderid , c.productid as productid,   round( rand()*10)   as quantity
+from customer a  , myorder b , product c 
+where  c.productid = 'productid2'
+.... 
+....
+....
+SQL> insert into purchase  select a.customerid  as customerid , b.orderid as orderid , c.productid as productid,   round( rand()*10)   as quantity
+from customer a  , myorder b , product c 
+where  c.productid = 'productid10'
