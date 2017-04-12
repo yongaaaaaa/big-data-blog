@@ -4,8 +4,8 @@ import boto.dynamodb
  
 # create connection to DynamoDB
 current_keys = None
-conn = boto.dynamodb.connect_to_region( 'ap-southeast-2', aws_access_key_id='<access key>', aws_secret_access_key='<secret key>')
-table = conn.get_table('purchase_temp')
+conn = boto.dynamodb.connect_to_region( '<region>', aws_access_key_id='<access key>', aws_secret_access_key='<secret key>')
+table = conn.get_table('<dynamoDB table name>')
 item_data = {}
 
 # input comes from STDIN emitted by Mapper
@@ -32,7 +32,7 @@ for line in sys.stdin:
 
 # put last data
 if current_keys == dickeys:
-   print 'Last one:' , current_keys #, item_data
+   #print 'Last one:' , current_keys #, item_data
    try:
        mykeys = dickeys.split(',')
        item = table.new_item(hash_key=mykeys[0] , range_key=mykeys[1], attrs=item_data )
