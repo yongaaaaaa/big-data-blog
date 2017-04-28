@@ -1,0 +1,48 @@
+{
+  "rules": [
+   {
+      "rule-type": "selection",
+      "rule-id": "1",
+      "rule-name": "1",
+      "object-locator": {
+        "schema-name": "mydatabase",
+        "table-name": "purchase"
+      },
+      "rule-action": "include"
+    },
+    {
+      "rule-type": "object-mapping",
+      "rule-id": "2",
+      "rule-name": "2",
+      "rule-action": "map-record-to-record",
+      "object-locator": {
+        "schema-name": "mydatabase",
+        "table-name": "purchase"
+ 
+      },
+      "target-table-name": "purchase",
+      "mapping-parameters": {
+        "partition-key-name": "customer_orderid",
+        "sort-key-name": "productid",
+        "exclude-columns": [
+          "customerid",
+          "orderid"           
+        ],
+        "attribute-mappings": [
+          {
+            "target-attribute-name": "customer_orderid",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "string",
+            "value": "${customerid}|${orderid}"
+          },
+          {
+            "target-attribute-name": "productid",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "string",
+            "value": "${productid}"
+          }
+        ]
+      }
+    }
+  ]
+}
