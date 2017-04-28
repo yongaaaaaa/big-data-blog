@@ -22,18 +22,15 @@ def lambda_handler(event, context):
             my_rangekey = data["row"]["values"]["orderid"]
             my_productid = data["row"]["values"]["productid"]
             my_quantity = str( data["row"]["values"]["quantity"] )
-            # print( my_table ,my_hashkey, my_rangekey, my_productid  )  # for debug 
             try:
                 response = client.get_item( Key={'customerid':{'S':my_hashkey} , 'orderid':{'S':my_rangekey}} ,TableName = my_table )
                 if 'Item' in response:
                     item = response['Item']
                     item[data["row"]["values"]["productid"]] = {"S":my_quantity}
                     result1 = client.put_item(Item = item , TableName = my_table )
-                    # print( 'result1 ==> ' , result1  )  # for debug 
                 else:
                     item = { 'customerid':{'S':my_hashkey} , 'orderid':{'S':my_rangekey} , my_productid :{"S":my_quantity}  }
                     result2 = client.put_item( Item = item , TableName = my_table )
-                    # print ( 'result2 ==> ' ,  result2    ) # for debug 
             except Exception, e:
                 print( 'WriteRowsEvent Exception ! :', e.message  , '==> Data:' ,data["row"]["values"]["customerid"]  , data["row"]["values"]["orderid"] )
         
