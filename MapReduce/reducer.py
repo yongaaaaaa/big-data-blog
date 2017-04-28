@@ -13,13 +13,10 @@ for line in sys.stdin:
     line = line.strip()
     dickeys, items  = line.split('\t')
     products = items.split(',')
-    #print dickeys , products 
     if current_keys == dickeys:
        item_data[products[0]]=products[1]  
-       #print current_keys
     else:
         if current_keys:
-          # print 'current keys:' , current_keys , ' dickeys:' , dickeys , item_data # for dubug
           try:
               mykeys = current_keys.split(',') 
               item = table.new_item(hash_key=mykeys[0] , range_key=mykeys[1], attrs=item_data )
@@ -32,7 +29,6 @@ for line in sys.stdin:
 
 # put last data
 if current_keys == dickeys:
-   #print 'Last one:' , current_keys #, item_data
    try:
        mykeys = dickeys.split(',')
        item = table.new_item(hash_key=mykeys[0] , range_key=mykeys[1], attrs=item_data )
